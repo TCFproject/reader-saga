@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BD index{% endblock %}
+
+{% block body %}
+    <h1>BD index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Date_publication</th>
+                <th>FilePath</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for b_d in b_ds %}
+            <tr>
+                <td>{{ b_d.id }}</td>
+                <td>{{ b_d.titre }}</td>
+                <td>{{ b_d.description }}</td>
+                <td>{{ b_d.datePublication ? b_d.datePublication|date('Y-m-d') : '' }}</td>
+                <td>{{ b_d.FilePath }}</td>
+                <td>
+                    <a href="{{ path('b_d_show', {'id': b_d.id}) }}">show</a>
+                    <a href="{{ path('b_d_edit', {'id': b_d.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('b_d_new') }}">Create new</a>
+{% endblock %}

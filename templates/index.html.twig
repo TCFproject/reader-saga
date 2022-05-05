@@ -4,9 +4,13 @@
     <main role="main">
         {% for auteur in auteurs %}
         <div>
-            {{ auteur.mdp }}
+
+            <p>Nom {{ auteur.nom }}</p>
+            <p>Email {{ auteur.email }}</p>
+            <p>MDP {{ auteur.mdp }}</p>
+            <p>..........................................................</p>
         </div>
         {% endfor %}
     </main>
-    <a href="http://127.0.0.1:8000/newAuteur">Passe</a>
+    <a href="{{ path('nouvel_auteur') }}">Form BD</a>
 {% endblock %}

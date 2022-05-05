@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\GenreRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,6 +24,16 @@ class Genre
      */
     private $libelle;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=BD::class, mappedBy="genre")
+     */
+    private $bDs;
+
+    public function __construct()
+    {
+        $this->bDs = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,6 +47,33 @@ class Genre
     public function setLibelle(string $libelle): self
     {
         $this->libelle = $libelle;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BD[]
+     */
+    public function getBDs(): Collection
+    {
+        return $this->bDs;
+    }
+
+    public function addBD(BD $bD): self
+    {
+        if (!$this->bDs->contains($bD)) {
+            $this->bDs[] = $bD;
+            $bD->addGenre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBD(BD $bD): self
+    {
+        if ($this->bDs->removeElement($bD)) {
+            $bD->removeGenre($this);
+        }
 
         return $this;
     }

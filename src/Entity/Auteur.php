@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AuteurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -41,6 +43,16 @@ class Auteur
      * @ORM\Column(type="string", length=255)
      */
     private $pseudo;
+
+    /**
+     * @ORM\OneToMany(targetEntity=BD::class, mappedBy="auteur")
+     */
+    private $bDs;
+
+    public function __construct()
+    {
+        $this->bDs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,6 +115,36 @@ class Auteur
     public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BD[]
+     */
+    public function getBDs(): Collection
+    {
+        return $this->bDs;
+    }
+
+    public function addBD(BD $bD): self
+    {
+        if (!$this->bDs->contains($bD)) {
+            $this->bDs[] = $bD;
+            $bD->setAuteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBD(BD $bD): self
+    {
+        if ($this->bDs->removeElement($bD)) {
+            // set the owning side to null (unless already changed)
+            if ($bD->getAuteur() === $this) {
+                $bD->setAuteur(null);
+            }
+        }
 
         return $this;
     }
