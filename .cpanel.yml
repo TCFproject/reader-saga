@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/public_html/
+    - export DEPLOYPATH=/public_html/FriendlyBis/
     - /public/ index.html $DEPLOYPATH
