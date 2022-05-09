@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/public_html/FriendlyBis/
-    - /public/ index.html $DEPLOYPATH
+    - export DEPLOYPATH=/home/lalq5495/public_html/
+    - /bin/cp -R * $DEPLOYPATH
