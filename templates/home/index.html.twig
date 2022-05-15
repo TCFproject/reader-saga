@@ -14,7 +14,8 @@
     {% if controller_name is empty %}
         <a href="{{ path('auteur_connect') }}">Connexion</a>
     {% else %}
-        <a href="{{ path('auteur_disconnect') }}">Deconnexion</a>
+        <a href="{{ path('auteur_disconnect') }}">Deconnexion</a><br>
+        <a href="{{ path('b_d_index') }}">Voir tes BDs</a>
     {% endif %}
     This friendly message is coming from:
     <ul>

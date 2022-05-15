@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,7 +13,7 @@ class ConnType extends AbstractType
     {
         $builder
             ->add('Email')
-            ->add('Mot_de_passe')
+            ->add('Mot_de_passe', PasswordType::class)
         ;
     }
 

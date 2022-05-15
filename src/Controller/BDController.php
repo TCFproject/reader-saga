@@ -4,11 +4,14 @@ namespace App\Controller;
 
 use App\Entity\BD;
 use App\Form\BDType;
+use App\Repository\AuteurRepository;
 use App\Repository\BDRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Migrations\Configuration\EntityManager;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -19,8 +22,9 @@ class BDController extends AbstractController
     /**
      * @Route("/", name="b_d_index", methods={"GET"})
      */
-    public function index(BDRepository $bDRepository): Response
+    public function index(BDRepository $bDRepository, Filesystem $filesystem): Response
     {
+        var_dump( $filesystem->readlink("/repo_bd"));
         return $this->render('bd/index.html.twig', [
             'b_ds' => $bDRepository->findAll(),
         ]);
@@ -29,9 +33,15 @@ class BDController extends AbstractController
     /**
      * @Route("/new", name="b_d_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, AuteurRepository $auteurRepository, SessionInterface $session): Response
     {
         $bD = new BD();
+        $renseign_auteur = $auteurRepository->findOneBy([
+            'nom' => $session->get('Nom'),
+            'prenom' => $session->get('Prenom'),
+            'pseudo' => $session->get('Pseudo')
+        ]);
+        $bD->setAuteur($renseign_auteur);
         $form = $this->createForm(BDType::class, $bD);
         $form->handleRequest($request);
 

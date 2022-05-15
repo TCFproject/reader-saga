@@ -20,14 +20,11 @@ class BDType extends AbstractType
             ->add('titre')
             ->add('description')
             ->add('date_publication')
-            ->add('FilePath', FileType::class)
-            ->add('auteur', EntityType::class,[
-                'class' => Auteur::class,
-                'choice_label' => 'nom'
-            ])
             ->add('categorie', EntityType::class,[
                 'class' => Cathegorie::class,
                 'choice_label' => 'libelle',
+                'multiple' => false,
+                'expanded' => true,
             ])
             ->add('genre', EntityType::class,[
                 'class' => Genre::class,
@@ -35,6 +32,7 @@ class BDType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
             ])
+            ->add('FilePath', FileType::class)
         ;
     }
 
