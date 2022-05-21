@@ -9,10 +9,13 @@ use App\Repository\BDRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Migrations\Configuration\EntityManager;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
  * @Route("/b/d")
@@ -33,7 +36,7 @@ class BDController extends AbstractController
     /**
      * @Route("/new", name="b_d_new", methods={"GET","POST"})
      */
-    public function new(Request $request, AuteurRepository $auteurRepository, SessionInterface $session): Response
+    public function new(Request $request, SluggerInterface $slugger, AuteurRepository $auteurRepository, SessionInterface $session): Response
     {
         $bD = new BD();
         $renseign_auteur = $auteurRepository->findOneBy([
@@ -46,11 +49,27 @@ class BDController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($bD);
-            $entityManager->flush();
+            
+            //$entityManager = $this->getDoctrine()->getManager();
+            $coverFile = $form->get('FilePath')->getData();
+            if ($coverFile){
+                $originalFilename = pathinfo($coverFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename."-".uniqid().".".$coverFile;
+                try{
+                    var_dump( $coverFile->move(
+                        $this->getParameter('cover_directory'),
+                        $newFilename
+                    ));
+                }catch (FileException $e){
+                    $e->getMessage();
+                }
+                $bD->setFilePath($newFilename);
+            }
+            //$entityManager->persist($bD);
+            //$entityManager->flush();
 
-            return $this->redirectToRoute('b_d_index', [], Response::HTTP_SEE_OTHER);
+            //return $this->redirectToRoute('b_d_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('bd/new.html.twig', [
