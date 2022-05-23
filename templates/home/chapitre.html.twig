@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{titre}} - {{chapitre}}{% endblock %}
+{% block body %}
+    <h1>{{chapitre}}</h1>
+    {% for img in fileJPG %}
+        <p>
+            <img src="{{ asset('comics/' ~ titre ~ '/' ~ chapitre ~ '/' ~ img.fileName ) }}">
+        </p>
+    {% endfor %}
+{% endblock %}

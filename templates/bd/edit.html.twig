@@ -5,9 +5,9 @@
 {% block body %}
     <h1>Edit BD</h1>
 
-    {{ include('b_d/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('bd/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('b_d_index') }}">back to list</a>
 
-    {{ include('b_d/_delete_form.html.twig') }}
+    {{ include('bd/_delete_form.html.twig') }}
 {% endblock %}

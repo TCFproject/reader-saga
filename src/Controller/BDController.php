@@ -27,7 +27,6 @@ class BDController extends AbstractController
      */
     public function index(BDRepository $bDRepository, Filesystem $filesystem): Response
     {
-        var_dump( $filesystem->readlink("/repo_bd"));
         return $this->render('bd/index.html.twig', [
             'b_ds' => $bDRepository->findAll(),
         ]);
@@ -50,26 +49,24 @@ class BDController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            //$entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->getDoctrine()->getManager();
             $coverFile = $form->get('FilePath')->getData();
+            $path_in_database =$coverFile->getClientOriginalName();
             if ($coverFile){
-                $originalFilename = pathinfo($coverFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename."-".uniqid().".".$coverFile;
                 try{
-                    var_dump( $coverFile->move(
+                    $coverFile->move(
                         $this->getParameter('cover_directory'),
-                        $newFilename
-                    ));
+                        $path_in_database
+                    );
                 }catch (FileException $e){
                     $e->getMessage();
                 }
-                $bD->setFilePath($newFilename);
+                $bD->setFilePath($path_in_database);
             }
-            //$entityManager->persist($bD);
-            //$entityManager->flush();
+            $entityManager->persist($bD);
+            $entityManager->flush();
 
-            //return $this->redirectToRoute('b_d_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('b_d_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('bd/new.html.twig', [

@@ -9,7 +9,6 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Titre</th>
                 <th>Description</th>
                 <th>Date_publication</th>
@@ -20,11 +19,10 @@
         <tbody>
         {% for b_d in b_ds %}
             <tr>
-                <td>{{ b_d.id }}</td>
                 <td>{{ b_d.titre }}</td>
                 <td>{{ b_d.description }}</td>
                 <td>{{ b_d.datePublication ? b_d.datePublication|date('Y-m-d') : '' }}</td>
-                <td>{{ b_d.FilePath }}</td>
+                <td><img width="150px" src=" {{ asset('comics/2ePages.jpg') }}"></td>
                 <td>
                     <a href="{{ path('b_d_show', {'id': b_d.id}) }}">show</a>
                     <a href="{{ path('b_d_edit', {'id': b_d.id}) }}">edit</a>
