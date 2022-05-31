@@ -3,12 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\BD;
+use App\Form\AddChapterType;
 use App\Form\BDType;
 use App\Repository\AuteurRepository;
 use App\Repository\BDRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\Migrations\Configuration\EntityManager;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +29,6 @@ class BDController extends AbstractController
      */
     public function index(BDRepository $bDRepository, Filesystem $filesystem): Response
     {
-        var_dump( $filesystem->readlink("/repo_bd"));
         return $this->render('bd/index.html.twig', [
             'b_ds' => $bDRepository->findAll(),
         ]);
@@ -36,7 +37,7 @@ class BDController extends AbstractController
     /**
      * @Route("/new", name="b_d_new", methods={"GET","POST"})
      */
-    public function new(Request $request, SluggerInterface $slugger, AuteurRepository $auteurRepository, SessionInterface $session): Response
+    public function new(Filesystem $filesystem, Request $request, AuteurRepository $auteurRepository, SessionInterface $session): Response
     {
         $bD = new BD();
         $renseign_auteur = $auteurRepository->findOneBy([
@@ -50,26 +51,25 @@ class BDController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            //$entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $this->getDoctrine()->getManager();
             $coverFile = $form->get('FilePath')->getData();
+            $path_in_database =$coverFile->getClientOriginalName();
             if ($coverFile){
-                $originalFilename = pathinfo($coverFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename."-".uniqid().".".$coverFile;
                 try{
-                    var_dump( $coverFile->move(
+                    $coverFile->move(
                         $this->getParameter('cover_directory'),
-                        $newFilename
-                    ));
+                        $path_in_database
+                    );
+                    $filesystem->mkdir('comics\\'.$form->get('titre')->getData());
                 }catch (FileException $e){
                     $e->getMessage();
                 }
-                $bD->setFilePath($newFilename);
+                $bD->setFilePath($path_in_database);
             }
-            //$entityManager->persist($bD);
-            //$entityManager->flush();
+            $entityManager->persist($bD);
+            $entityManager->flush();
 
-            //return $this->redirectToRoute('b_d_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('b_d_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('bd/new.html.twig', [
@@ -79,12 +79,36 @@ class BDController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="b_d_show", methods={"GET"})
+     * @Route("/{id}", name="b_d_show", methods={"GET","POST"})
      */
-    public function show(BD $bD): Response
-    {
+    public function show(BD $bD, Request $request, Filesystem $filesystem, SluggerInterface $slugger): Response {
+        $dir = $this->getParameter('cover_directory').'\\'.$bD->getTitre();
+        $finder = Finder::create()
+            ->in($dir)
+            ->directories();
+        $files = iterator_to_array($finder,false);
+
+        $form = $this->createForm(AddChapterType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $filePath = 'comics\\'.$bD->getTitre().'\\'.$form->get("Nom_du_chapitre")->getData();
+            $filesystem->mkdir($filePath);
+            $imgs = $request->files->get("add_chapter");
+            foreach ($imgs["Selectionnez_un_chapitre"] as $img){
+                try{
+                    $img->move(
+                        $filePath,
+                        $img->getClientOriginalName()
+                    );
+                }catch (FileException $e){
+                    $e->getMessage();
+                }
+            }
+        }
         return $this->render('bd/show.html.twig', [
             'b_d' => $bD,
+            'form' => $form->createView(),
+            'chapters' => $files
         ]);
     }
 
@@ -111,7 +135,7 @@ class BDController extends AbstractController
     /**
      * @Route("/{id}", name="b_d_delete", methods={"POST"})
      */
-    public function delete(Request $request, BD $bD): Response
+    public function delete(Request $request, BD $bD, Filesystem $filesystem): Response
     {
         if ($this->isCsrfTokenValid('delete'.$bD->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
@@ -119,6 +143,12 @@ class BDController extends AbstractController
             $entityManager->flush();
         }
 
+        try{
+            $filesystem->remove("comics/".$bD->getTitre());
+            $filesystem->remove("comics/".$bD->getFilePath());
+        }catch (FileException $e){
+            $e->getMessage();
+        }
         return $this->redirectToRoute('b_d_index', [], Response::HTTP_SEE_OTHER);
     }
 }

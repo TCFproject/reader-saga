@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Auteur;
 use App\Entity\BD;
 use App\Entity\Cathegorie;
 use App\Entity\Genre;
@@ -12,8 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\Image;
 
 class BDType extends AbstractType
 {
@@ -42,13 +40,7 @@ class BDType extends AbstractType
                 'label' => 'Couverture',
                 'mapped' => false,
                 'constraints' => [
-                    new File([
-                        'mimeTypes' => [
-                            'application/jpg',
-                            'application/jpeg',
-                        ],
-                        'mimeTypesMessage' => 'Enregistrez une image svp',
-                    ])
+                    new Image()
                 ]
             ])
         ;

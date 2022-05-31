@@ -24,8 +24,7 @@
                 <td>{{ b_d.datePublication ? b_d.datePublication|date('Y-m-d') : '' }}</td>
             </tr>
             <tr>
-                <th>FilePath</th>
-                <td>{{ b_d.FilePath }}</td>
+                <td><img width="100px" src=" {{ asset('comics/'~b_d.FilePath) }}"></td>
             </tr>
         </tbody>
     </table>
@@ -34,5 +33,11 @@
 
     <a href="{{ path('b_d_edit', {'id': b_d.id}) }}">edit</a>
 
-    {{ include('bd/_delete_form.html.twig') }}
+
+    {{ include('bd/_form.html.twig') }}
+    <ul>
+        {% for chapter in chapters %}
+            <li>{{ chapter.fileName }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

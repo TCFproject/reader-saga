@@ -22,5 +22,21 @@
         <li>Your controller at <code><a href="{{ 'D:/Symfony/reader-saga/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
         <li>Your template at <code><a href="{{ 'D:/Symfony/reader-saga/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
     </ul>
+
+    <table>
+        <tr>
+            {% if bds is not empty %}
+                {% for bd in bds %}
+
+                    <th><p><a href="{{ path('detail', {'titre': bd.titre})}}">{{ bd.titre }}</a></p>
+                        <a href="{{ path('detail', {'titre': bd.titre})}}"><img width="150px" src=" {{ asset('comics/' ~ bd.FilePath) }}"></a>
+                    </th>
+                {% endfor %}
+            {% else %}
+                <p>Il n'y a pas d'oeuvre encore</p>
+            {% endif %}
+        </tr>
+    </table>
+
 </div>
 {% endblock %}

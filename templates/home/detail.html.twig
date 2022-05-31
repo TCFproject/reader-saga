@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{bd.titre}}{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+    <h1>{{ bd.titre }}</h1>
+    <td><a href="{{ path('detail', {'titre': bd.titre})}}"><img width="150px" src=" {{ asset('comics/' ~ bd.FilePath) }}" alt=""></a></td>
+    <p>{{ bd.categorie.libelle }}</p>
+    <p>
+        {% for genre in bd.genre %}
+            {{ genre.libelle }}
+        {% endfor %}
+    </p>
+    <p>{{ bd.description }}</p>
+    {% for file in chapitre %}
+        <div>
+            <a href="{{ path('lire', {'titre': bd.titre, 'chapitre':file.fileName}) }}" target="_blank"><p>{{ file.fileName }}</p></a>
+        </div>
+    {% endfor %}
+{% endblock %}
