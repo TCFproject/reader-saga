@@ -17,7 +17,7 @@
     <p>{{ bd.description }}</p>
     {% for file in chapitre %}
         <div>
-            <a href="{{ path('lire', {'titre': bd.titre, 'chapitre':file.fileName}) }}"><p>{{ file.fileName }}</p></a>
+            <a href="{{ path('lire', {'titre': bd.titre, 'chapitre':file.fileName}) }}" target="_blank"><p>{{ file.fileName }}</p></a>
         </div>
     {% endfor %}
 {% endblock %}

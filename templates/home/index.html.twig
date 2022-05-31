@@ -23,21 +23,20 @@
         <li>Your template at <code><a href="{{ 'D:/Symfony/reader-saga/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
     </ul>
 
-    {% if bds is not empty %}
-        {% for bd in bds %}
+    <table>
+        <tr>
+            {% if bds is not empty %}
+                {% for bd in bds %}
 
-                <table>
-                    <tr>
-                        <th> <a href="{{ path('detail', {'titre': bd.titre})}}">{{ bd.titre }}</a></th>
-                    </tr>
-                    <tr>
-                        <td><a href="{{ path('detail', {'titre': bd.titre})}}"><img width="150px" src=" {{ asset('comics/' ~ bd.FilePath) }}"></a></td>
-                    </tr>
-                </table>
+                    <th><p><a href="{{ path('detail', {'titre': bd.titre})}}">{{ bd.titre }}</a></p>
+                        <a href="{{ path('detail', {'titre': bd.titre})}}"><img width="150px" src=" {{ asset('comics/' ~ bd.FilePath) }}"></a>
+                    </th>
+                {% endfor %}
+            {% else %}
+                <p>Il n'y a pas d'oeuvre encore</p>
+            {% endif %}
+        </tr>
+    </table>
 
-        {% endfor %}
-    {% else %}
-        <p>Il n'y a pas d'oeuvre encore</p>
-    {% endif %}
 </div>
 {% endblock %}

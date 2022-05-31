@@ -2,6 +2,7 @@
 {% block title %}{{titre}} - {{chapitre}}{% endblock %}
 {% block body %}
     <h1>{{chapitre}}</h1>
+    {{ form(form) }}
     {% for img in fileJPG %}
         <p>
             <img src="{{ asset('comics/' ~ titre ~ '/' ~ chapitre ~ '/' ~ img.fileName ) }}">

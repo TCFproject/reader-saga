@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\BD;
+use App\Form\AuteurType;
 use App\Repository\BDRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
@@ -45,6 +46,7 @@ class HomeController extends AbstractController
      * @Route("/{titre}/{chapitre}", name="lire")
      */
     public function lecture(string $titre, string $chapitre):Response {
+        $form = $this->createForm(AuteurType::class);
         $dir = $this->getParameter('cover_directory').'\\'.$titre.'\\'.$chapitre;
         $finder = Finder::create()
             ->in($dir)
@@ -53,7 +55,8 @@ class HomeController extends AbstractController
         return $this->render('home/chapitre.html.twig',[
             'chapitre' => $chapitre,
             'titre' => $titre,
-            'fileJPG' => $files
+            'fileJPG' => $files,
+            'form' => $form->createView()
         ]);
     }
 }
