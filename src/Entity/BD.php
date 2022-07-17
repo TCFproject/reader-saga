@@ -42,11 +42,6 @@ class BD
     private $auteur;
 
     /**
-     * @ORM\OneToMany(targetEntity=Cathegorie::class, mappedBy="bD")
-     */
-    private $cathegories;
-
-    /**
      * @ORM\ManyToMany(targetEntity=Genre::class, inversedBy="bDs")
      */
     private $genre;
